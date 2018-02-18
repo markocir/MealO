@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="labelDescription" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelAllergens" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="textFieldDescription" min="-2" pref="393" max="-2" attributes="0"/>
+                          <Component id="textFieldAllergens" min="-2" pref="150" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="labelMealNumber" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelDate" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelId" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="textFieldId" min="-2" max="-2" attributes="0"/>
+                          <Component id="textFieldMealNumber" min="-2" max="-2" attributes="0"/>
+                          <Component id="textFieldDate" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+              </Group>
+              <EmptySpace max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="labelId" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="textFieldId" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="labelDate" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="textFieldDate" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="labelMealNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="textFieldMealNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="labelDescription" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="textFieldDescription" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="labelAllergens" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="textFieldAllergens" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="32767" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="javax.swing.JLabel" name="labelId">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="ID"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelDate">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Date"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelMealNumber">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Meal Number"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelDescription">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Description"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="labelAllergens">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Allergens"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="textFieldMealNumber">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="null"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="textFieldDate">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="null"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="textFieldId">
+      <Properties>
+        <Property name="editable" type="boolean" value="false"/>
+        <Property name="text" type="java.lang.String" value="null"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="textFieldDescription">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="null"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JTextField" name="textFieldAllergens">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="null"/>
+      </Properties>
+    </Component>
+  </SubComponents>
+</Form>
