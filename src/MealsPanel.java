@@ -30,11 +30,11 @@ public class MealsPanel extends javax.swing.JPanel {
         fullName.setText(database.getFullName());
         fetchMeals.execute();
         refreshGroupButtons();
+        loadAllergensLegendItems();
     }    
     
     public void addDay(CustomJList day)
     {
-        day.setAlignmentX(Component.CENTER_ALIGNMENT);
         listsPanel.add(day);
     }
     
@@ -125,6 +125,18 @@ public class MealsPanel extends javax.swing.JPanel {
         return true;
     }
     
+    private void loadAllergensLegendItems()
+    {
+        Allergens allergens = new Allergens(true, Allergens.ICON_SIZE_TWENTYONE);
+        
+        for(int i = 1; i<=14; i++)
+        {
+            AllergensLegendItem allergensLegendItem = new AllergensLegendItem(allergens.getIconName(i), allergens.getIcon(i));
+            allergensLegendItem.setAlignmentX(Component.CENTER_ALIGNMENT);
+            legendPanel.add(allergensLegendItem);
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -141,14 +153,19 @@ public class MealsPanel extends javax.swing.JPanel {
         shiftMorning = new javax.swing.JRadioButton();
         shiftAfternoon = new javax.swing.JRadioButton();
         shiftNight = new javax.swing.JRadioButton();
+        legendPanel = new javax.swing.JPanel();
 
         setMinimumSize(new java.awt.Dimension(800, 400));
+        setPreferredSize(new java.awt.Dimension(1920, 1080));
 
         fullName.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         fullName.setText("<<Full Name>>");
 
         ConfirmAndExit.setBackground(new java.awt.Color(153, 255, 153));
         ConfirmAndExit.setText("Confirm & Exit");
+        ConfirmAndExit.setMaximumSize(new java.awt.Dimension(150, 150));
+        ConfirmAndExit.setMinimumSize(new java.awt.Dimension(100, 100));
+        ConfirmAndExit.setPreferredSize(new java.awt.Dimension(150, 150));
         ConfirmAndExit.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 ConfirmAndExitMouseReleased(evt);
@@ -158,7 +175,7 @@ public class MealsPanel extends javax.swing.JPanel {
         listsPanel.setLayout(new javax.swing.BoxLayout(listsPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         shiftGroup.add(shiftMorning);
-        shiftMorning.setText("Dop");
+        shiftMorning.setText("Morning Shift");
         shiftMorning.setActionCommand("1");
         shiftMorning.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -170,7 +187,7 @@ public class MealsPanel extends javax.swing.JPanel {
         });
 
         shiftGroup.add(shiftAfternoon);
-        shiftAfternoon.setText("Pop");
+        shiftAfternoon.setText("Afternoon Shift");
         shiftAfternoon.setActionCommand("2");
         shiftAfternoon.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -182,7 +199,7 @@ public class MealsPanel extends javax.swing.JPanel {
         });
 
         shiftGroup.add(shiftNight);
-        shiftNight.setText("Noc");
+        shiftNight.setText("Night Shift");
         shiftNight.setActionCommand("3");
         shiftNight.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -193,47 +210,56 @@ public class MealsPanel extends javax.swing.JPanel {
             }
         });
 
+        legendPanel.setBackground(new java.awt.Color(240, 240, 240));
+        legendPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 3, 0));
+        legendPanel.setMaximumSize(new java.awt.Dimension(0, 0));
+        legendPanel.setMinimumSize(new java.awt.Dimension(0, 0));
+        legendPanel.setPreferredSize(new java.awt.Dimension(0, 0));
+        legendPanel.setLayout(new javax.swing.BoxLayout(legendPanel, javax.swing.BoxLayout.LINE_AXIS));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(legendPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(listsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(fullName)
                             .addGroup(layout.createSequentialGroup()
+                                .addGap(15, 15, 15)
+                                .addComponent(fullName))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
                                 .addComponent(shiftMorning)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(shiftAfternoon)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(shiftNight)))
-                        .addGap(0, 1209, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 1334, Short.MAX_VALUE)
+                        .addComponent(ConfirmAndExit, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ConfirmAndExit, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(fullName)
+                        .addGap(32, 32, 32)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(shiftMorning)
+                            .addComponent(shiftAfternoon)
+                            .addComponent(shiftNight)))
+                    .addComponent(ConfirmAndExit, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(fullName)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(shiftMorning)
-                    .addComponent(shiftAfternoon)
-                    .addComponent(shiftNight))
-                .addGap(9, 9, 9)
                 .addComponent(listsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ConfirmAndExit, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 330, Short.MAX_VALUE)
+                .addComponent(legendPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -275,6 +301,7 @@ public class MealsPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ConfirmAndExit;
     private javax.swing.JLabel fullName;
+    private javax.swing.JPanel legendPanel;
     private javax.swing.JPanel listsPanel;
     private javax.swing.JRadioButton shiftAfternoon;
     private javax.swing.ButtonGroup shiftGroup;
