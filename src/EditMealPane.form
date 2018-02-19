@@ -21,17 +21,6 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="labelDescription" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="labelAllergens" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="textFieldDescription" min="-2" pref="393" max="-2" attributes="0"/>
-                          <Component id="textFieldAllergens" min="-2" pref="150" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="labelMealNumber" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="labelDate" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="labelId" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -43,8 +32,19 @@
                           <Component id="textFieldDate" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
                       </Group>
                   </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="labelDescription" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="labelAllergens" alignment="0" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="textFieldDescription" pref="387" max="32767" attributes="0"/>
+                          <Component id="allergensCheckboxes" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
+              <EmptySpace pref="12" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -71,12 +71,14 @@
                   <Component id="labelDescription" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="textFieldDescription" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="labelAllergens" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="textFieldAllergens" alignment="3" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="labelAllergens" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="114" max="32767" attributes="0"/>
+                  </Group>
+                  <Component id="allergensCheckboxes" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -129,10 +131,12 @@
         <Property name="text" type="java.lang.String" value="null"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="textFieldAllergens">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="null"/>
-      </Properties>
-    </Component>
+    <Container class="javax.swing.JPanel" name="allergensCheckboxes">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
+        <Property name="columns" type="int" value="0"/>
+        <Property name="rows" type="int" value="1"/>
+      </Layout>
+    </Container>
   </SubComponents>
 </Form>
