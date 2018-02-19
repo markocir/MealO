@@ -33,7 +33,6 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="mealsButton" min="-2" pref="100" max="-2" attributes="0"/>
                           </Group>
-                          <Component id="printTomorrowButton" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="sidePanel" min="-2" pref="1100" max="-2" attributes="0"/>
@@ -62,9 +61,7 @@
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="listOrders" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="printTomorrowButton" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="213" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="319" max="32767" attributes="0"/>
                   </Group>
                   <Component id="sidePanel" max="32767" attributes="0"/>
               </Group>
@@ -113,14 +110,6 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Administration Panel"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="printTomorrowButton">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Print Tomorrows Meals"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="printTomorrowButtonActionPerformed"/>
-      </Events>
     </Component>
     <Container class="javax.swing.JPanel" name="sidePanel">
 

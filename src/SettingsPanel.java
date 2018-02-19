@@ -40,7 +40,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         mealsButton = new javax.swing.JButton();
         usersButton = new javax.swing.JButton();
         adminPanelText = new javax.swing.JLabel();
-        printTomorrowButton = new javax.swing.JButton();
         sidePanel = new javax.swing.JPanel();
         listOrders = new javax.swing.JButton();
 
@@ -71,13 +70,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         adminPanelText.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         adminPanelText.setText("Administration Panel");
 
-        printTomorrowButton.setText("Print Tomorrows Meals");
-        printTomorrowButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                printTomorrowButtonActionPerformed(evt);
-            }
-        });
-
         sidePanel.setLayout(new java.awt.BorderLayout());
 
         listOrders.setText("List Orders");
@@ -105,8 +97,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(usersButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(mealsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(printTomorrowButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(mealsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(sidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 1100, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(219, Short.MAX_VALUE))
@@ -128,9 +119,7 @@ public class SettingsPanel extends javax.swing.JPanel {
                             .addComponent(mealsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(listOrders, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(printTomorrowButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 213, Short.MAX_VALUE))
+                        .addGap(0, 319, Short.MAX_VALUE))
                     .addComponent(sidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -163,14 +152,6 @@ public class SettingsPanel extends javax.swing.JPanel {
         sidePanel.validate();
     }//GEN-LAST:event_mealsButtonActionPerformed
 
-    private void printTomorrowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printTomorrowButtonActionPerformed
-        String[] dates = database.getUpcommingDates(0, database.getNumberOfWorkdays());
-        String[] date = dates[0].split("\\s");
-        
-        Print printer = new Print(database, date[1], 1);
-        printer.execute();
-    }//GEN-LAST:event_printTomorrowButtonActionPerformed
-
     private void listOrdersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_listOrdersActionPerformed
         if(tablePanel != null)
             sidePanel.remove(tablePanel);
@@ -185,7 +166,6 @@ public class SettingsPanel extends javax.swing.JPanel {
     private javax.swing.JLabel fullName;
     private javax.swing.JButton listOrders;
     private javax.swing.JButton mealsButton;
-    private javax.swing.JButton printTomorrowButton;
     private javax.swing.JPanel sidePanel;
     private javax.swing.JButton usersButton;
     // End of variables declaration//GEN-END:variables
