@@ -1,32 +1,13 @@
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.Shape;
-import java.awt.image.ImageObserver;
-import java.text.AttributedCharacterIterator;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/**
- *
- * @author markoc
- */
 public class MealListItemRenderer extends javax.swing.JPanel implements ListCellRenderer{
     boolean isPrinted = false;
     int selectedIndex = -1;
@@ -50,35 +31,22 @@ public class MealListItemRenderer extends javax.swing.JPanel implements ListCell
             boolean isSelected, boolean cellHasFocus) {
             String[] part = value.toString().split("<break/>");
             
-            HashMap<String, ImageIcon> iconMap = new HashMap<>(14);
-            iconMap.put("1", new ImageIcon("src/allergens/images/wheat.png"));
-            iconMap.put("2", new ImageIcon("src/allergens/images/crustances.png"));
-            iconMap.put("3", new ImageIcon("src/allergens/images/eggs.png"));
-            iconMap.put("4", new ImageIcon("src/allergens/images/fish.png"));
-            iconMap.put("5", new ImageIcon("src/allergens/images/peanut.png"));
-            iconMap.put("6", new ImageIcon("src/allergens/images/soya.png"));
-            iconMap.put("7", new ImageIcon("src/allergens/images/milk.png"));
-            iconMap.put("8", new ImageIcon("src/allergens/images/treenut.png"));
-            iconMap.put("9", new ImageIcon("src/allergens/images/celery.png"));
-            iconMap.put("10", new ImageIcon("src/allergens/images/mustard.png"));
-            iconMap.put("11", new ImageIcon("src/allergens/images/sesame.png"));
-            iconMap.put("12", new ImageIcon("src/allergens/images/sulphurdioxide.png"));
-            iconMap.put("13", new ImageIcon("src/allergens/images/lupin.png"));
-            iconMap.put("14", new ImageIcon("src/allergens/images/molluscs.png"));
+            Allergens allergens = new Allergens(false, Allergens.ICON_SIZE_SIXTEEN);
             
             mealNumber.setText(part[0]);
-            mealDescription.setText((part[1].compareTo("null") == 0) ? "" : part[1]);
-            String allergensString = (part[2].compareTo("null") == 0) ? "" : part[2];
+            mealDescription.setText((part[1].compareTo("null") == 0) ? null : part[1]);
+            String allergensString = (part[2].compareTo("null") == 0) ? null : part[2];
             
-            String[] allergensArray = allergensString.split("\\s");
+            String[] allergensArray = allergensString.trim().split("\\s");
             allergensPanel.removeAll();
             for(String allergenNumber : allergensArray)
             {
-                if(iconMap.containsKey(allergenNumber))
-                {
-                    allergensPanel.add(new JLabel(" "));
-                    allergensPanel.add(new JLabel(iconMap.get(allergenNumber)));
-                }
+                if(!allergenNumber.equals(""))
+                    if(allergens.containsKey(Integer.valueOf(allergenNumber)))
+                        {
+                            allergensPanel.add(new JLabel(" "));
+                            allergensPanel.add(new JLabel(allergens.getIcon(Integer.valueOf(allergenNumber))));
+                        }
             }
             
             
