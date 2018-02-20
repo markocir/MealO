@@ -1,9 +1,10 @@
 
 import java.util.ArrayList;
 
-
-
-
+/**
+ *
+ * @author Marko Čirič <https://github.com/markocir>
+ */
 class AddUser extends ActionSettings {
     private CustomTableModel tableModel;
     private String firstName;

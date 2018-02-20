@@ -1,4 +1,3 @@
-
 import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -17,7 +16,10 @@ import java.util.logging.Logger;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 
-
+/**
+ *
+ * @author Marko Čirič <https://github.com/markocir>
+ */
 class Print extends ActionSettings implements Printable{
     String date = null;
     int shiftNumber = -1;

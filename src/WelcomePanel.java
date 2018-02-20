@@ -1,10 +1,11 @@
 import java.awt.Container;
 import javax.swing.JOptionPane;
 
+/**
+ *
+ * @author Marko Čirič <https://github.com/markocir>
+ */
 public class WelcomePanel extends javax.swing.JPanel {
-    private String DATABASE_URL;
-    private String USERNAME;
-    private String PASSWORD;
     private Database database = null;
     private Container rootPane = null;
     private MealsPanel orderPanel = null;
@@ -15,10 +16,7 @@ public class WelcomePanel extends javax.swing.JPanel {
         initComponents();
     }
     
-    public WelcomePanel(String database, String username, String password, Container rp, MealsPanel op) {
-        DATABASE_URL = database;
-        USERNAME  = username;
-        PASSWORD = password;
+    public WelcomePanel(Container rp, MealsPanel op) {
         rootPane = rp;
         orderPanel = op;
         initComponents();
@@ -70,7 +68,7 @@ public class WelcomePanel extends javax.swing.JPanel {
             StringBuilder password = new StringBuilder();
             password.append(passwordArray);
 
-                database = new Database(DATABASE_URL, USERNAME, PASSWORD, Integer.parseInt(password.toString()));
+                database = new Database(Integer.parseInt(password.toString()));
                 if(!database.isUserFound())
                 {
                     JOptionPane.showConfirmDialog(this, "Entered key does not exist.", "User Not Found", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);

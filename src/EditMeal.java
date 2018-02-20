@@ -1,22 +1,10 @@
-
 import java.awt.Container;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
-import javax.swing.RowSorter;
-import javax.swing.table.TableModel;
-import javax.swing.table.TableRowSorter;
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /**
  *
- * @author markoc
+ * @author Marko Čirič <https://github.com/markocir>
  */
 public class EditMeal extends ActionSettings{
 

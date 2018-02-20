@@ -1,13 +1,15 @@
 
 import java.awt.Color;
 import java.awt.Component;
-import java.util.HashMap;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
+/**
+ *
+ * @author Marko Čirič <https://github.com/markocir>
+ */
 public class MealListItemRenderer extends javax.swing.JPanel implements ListCellRenderer{
     boolean isPrinted = false;
     int selectedIndex = -1;
@@ -48,7 +50,6 @@ public class MealListItemRenderer extends javax.swing.JPanel implements ListCell
                             allergensPanel.add(new JLabel(allergens.getIcon(Integer.valueOf(allergenNumber))));
                         }
             }
-            
             
             if(mealDescription.getText().compareTo("") == 0 || isPrinted)
                 setEnabled(false);

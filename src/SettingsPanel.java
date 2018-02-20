@@ -1,10 +1,11 @@
 import java.awt.Container;
-import java.util.ArrayList;
 import javax.swing.JPanel;
 
-
+/**
+ *
+ * @author Marko Čirič <https://github.com/markocir>
+ */
 public class SettingsPanel extends javax.swing.JPanel {
-    private ArrayList<ActionSettings> actionSettings = new ArrayList<>(0);
     private JPanel tablePanel;
     private Database database;
     private Container container;
