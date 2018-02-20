@@ -12,28 +12,29 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
-
-
 class Database {
     private boolean isUserFound = false;
     
+    private static final String DATABASE_URL = "jdbc:derby:src/db";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "root";
+    
     private String DEFAULT_QUERY = "SELECT * FROM mo_users WHERE user_id = ?";
     private Connection connection;
-    private String database_url = "", username = "", password = "";
     private Account account;
     private final int numberOfMealsPerDay = 6;
     
     private final int numberOfWorkdays = 6; 
     
-    public Database(String database_url, String username, String password, int accountNumber)
+    public Database(int accountNumber)
+    {
+        retrieve(accountNumber); 
+    }
+
+    public void retrieve(int accountNumber)
     {
         try {
-            this.database_url = database_url;
-            this.username = username;
-            this.password = password;
-
-            connection = DriverManager.getConnection(database_url, username, password);
+            connection = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD);
             PreparedStatement findUserStatement = connection.prepareStatement(DEFAULT_QUERY,
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
@@ -56,28 +57,7 @@ class Database {
             
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
-        } 
-    }
-
-    public void retrieve() throws SQLException
-    {
-            connection = DriverManager.getConnection(database_url, username, password);
-            PreparedStatement findUserStatement = connection.prepareStatement(DEFAULT_QUERY,
-                    ResultSet.TYPE_SCROLL_INSENSITIVE,
-                    ResultSet.CONCUR_READ_ONLY);
-
-            findUserStatement.setInt(1, account.getUserId());
-            ResultSet rs = findUserStatement.executeQuery();
-
-            if(!rs.next())
-            {
-                connection.close();
-                return;
-            }
-            else
-                isUserFound = true;
-
-            account = new Account(connection, rs.getInt("user_id"), rs.getString("firstName"), rs.getString("lastName"), rs.getInt("superUser"));
+        }
 
     }
     
