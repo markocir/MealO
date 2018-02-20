@@ -15,7 +15,7 @@ Admin panel offers control over users and meals.
 To import meals the meal scheme XLSX file needs to be in the pre-defined location and formated correctly.
 After the import, meals appear in meals table, and can be browsed by shifts, edited and removed if necessary.
 
-![Order Meals](graphcis/OrderMeals.gif)
+![Order Meals](graphics/OrderMeals.gif)
 
 When ordering meals just simply select the item from the list. To remove selection from item simply click the item again.
 Before changing the shift views if meals selection changes have been made a prompt asks to save or dismiss changes.
