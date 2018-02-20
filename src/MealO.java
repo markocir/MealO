@@ -11,13 +11,10 @@ import javax.swing.JFrame;
 
 /**
  *
- * @author markoc
+ * @author markocir <https://github.com/markocir>
  */
 public class MealO extends JFrame {
     
-    private static final String DATABASE_URL = "jdbc:derby:src/db";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "root";
     /**
      * Creates new form MealO
      */
@@ -34,11 +31,13 @@ public class MealO extends JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        welcomePanel = new WelcomePanel(DATABASE_URL, USERNAME, PASSWORD, getContentPane(), orderPanel);
+        welcomePanel = new WelcomePanel(getContentPane(), orderPanel);
         orderPanel = new MealsPanel();
         settingsPanel = new SettingsPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new java.awt.Dimension(1600, 920));
+        setPreferredSize(new java.awt.Dimension(1600, 920));
         getContentPane().setLayout(new java.awt.CardLayout());
         getContentPane().add(welcomePanel, "card3");
         getContentPane().add(orderPanel, "card4");
