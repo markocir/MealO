@@ -1,5 +1,6 @@
 
 import java.util.ArrayList;
+import javax.swing.DefaultListModel;
 
 class FetchMeals extends ActionOrder {
    
@@ -28,7 +29,7 @@ class FetchMeals extends ActionOrder {
             // get meals by date and shift number
             ArrayList<MealOrderItem> mealList = getMealsByDate(datePart[1], getShiftNumber());
             // define empty list model
-            CustomListModel<MealOrderItem> listModel = new CustomListModel<>();
+            DefaultListModel<MealOrderItem> listModel = new DefaultListModel<>();
             // define empty list of disabled cells
             ArrayList<Integer> listOfDisabledCells = new ArrayList<>(0);
             
@@ -86,7 +87,7 @@ class FetchMeals extends ActionOrder {
             }
             
             // fill and add a custom cell to the JList
-            getMealsPanel().addDay(new CustomJList(datePart[0], datePart[1], listModel, listOfDisabledCells, selectedMeal, isPrinted));
+            getMealsPanel().addDay(new DailyMealsList(datePart[0], datePart[1], listModel, listOfDisabledCells, selectedMeal, isPrinted));
         }
         
         // show changes
