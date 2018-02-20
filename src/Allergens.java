@@ -1,5 +1,4 @@
 
-import java.util.HashMap;
 import javax.swing.ImageIcon;
 
 /*
@@ -13,7 +12,7 @@ import javax.swing.ImageIcon;
  * @author markoc
  */
 public class Allergens {
-    private HashMap<String, ImageIcon> iconMap;
+    private ImageIcon[] iconMap;
     private String[] names;
     
     /**
@@ -74,25 +73,25 @@ public class Allergens {
      * @param size 
      */
     
-    public void generateIcons(Integer size)
+    public void generateIcons(int size)
     {
-        iconMap = new HashMap<>(TOTAL_NUMBER_OF_ALLERGENS);
+        iconMap = new ImageIcon[Allergens.TOTAL_NUMBER_OF_ALLERGENS];
         String location = String.format("src/allergens/images/size/%d/",size);
         
-        iconMap.put("1", new ImageIcon(location+"wheat.png"));
-        iconMap.put("2", new ImageIcon(location+"crustances.png"));
-        iconMap.put("3", new ImageIcon(location+"eggs.png"));
-        iconMap.put("4", new ImageIcon(location+"fish.png"));
-        iconMap.put("5", new ImageIcon(location+"peanut.png"));
-        iconMap.put("6", new ImageIcon(location+"soya.png"));
-        iconMap.put("7", new ImageIcon(location+"milk.png"));
-        iconMap.put("8", new ImageIcon(location+"treenut.png"));
-        iconMap.put("9", new ImageIcon(location+"celery.png"));
-        iconMap.put("10", new ImageIcon(location+"mustard.png"));
-        iconMap.put("11", new ImageIcon(location+"sesame.png"));
-        iconMap.put("12", new ImageIcon(location+"sulphurdioxide.png"));
-        iconMap.put("13", new ImageIcon(location+"lupin.png"));
-        iconMap.put("14", new ImageIcon(location+"molluscs.png"));
+        iconMap[0] = new ImageIcon(location+"wheat.png");
+        iconMap[1] = new ImageIcon(location+"crustances.png");
+        iconMap[2] = new ImageIcon(location+"eggs.png");
+        iconMap[3] = new ImageIcon(location+"fish.png");
+        iconMap[4] = new ImageIcon(location+"peanut.png");
+        iconMap[5] = new ImageIcon(location+"soya.png");
+        iconMap[6] = new ImageIcon(location+"milk.png");
+        iconMap[7] = new ImageIcon(location+"treenut.png");
+        iconMap[8] = new ImageIcon(location+"celery.png");
+        iconMap[9] = new ImageIcon(location+"mustard.png");
+        iconMap[10] = new ImageIcon(location+"sesame.png");
+        iconMap[11] = new ImageIcon(location+"sulphurdioxide.png");
+        iconMap[12] = new ImageIcon(location+"lupin.png");
+        iconMap[13] = new ImageIcon(location+"molluscs.png");
     }
     
     /**
@@ -103,7 +102,7 @@ public class Allergens {
      */
     public ImageIcon getIcon(int key)
     {
-        return iconMap.get(String.valueOf(key));
+        return iconMap[--key];
     }
     
     /**
@@ -114,12 +113,15 @@ public class Allergens {
      */
     public String getIconName(int key)
     {
-        return names[key-1];
+        return names[--key];
     }
     
     public boolean containsKey(int key)
     {
-        return iconMap.containsKey(String.valueOf(key));
+        if(iconMap.length >= key)
+            return true;
+        else
+            return false;
     }
     
 }
