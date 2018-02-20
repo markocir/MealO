@@ -3,16 +3,9 @@ import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SpringLayout;
@@ -192,7 +185,8 @@ public class OrdersSettings extends JPanel{
         {
             if(date.equals(datePart[1]))
                 dateFound = true;
-
+            
+            // for each date that is >= todays date add row to ordered meals list
             if(dateFound)
             {
 
@@ -200,7 +194,6 @@ public class OrdersSettings extends JPanel{
 
                 for(int mealNumber = 1; mealNumber<=database.getNumberOfMealsPerDay(); mealNumber++)
                 {
-
                     int count = database.getCountOfMeals(date, shiftNumber, mealNumber);
                     ordersRow.setMealCount(mealNumber, count);
                 }
@@ -211,6 +204,7 @@ public class OrdersSettings extends JPanel{
         
         ordersTable = new Object[ordersList.size()][tableColumns.length];
         
+        // fill the table from ordered meals list
         for(int i=0;i<ordersList.size();i++)
         {
             Orders o = ordersList.get(i);
@@ -223,6 +217,10 @@ public class OrdersSettings extends JPanel{
             }
         }
         
+        // remove all elements from the list
+        ordersList.clear();
+        
+        // fill the table model with table data
         customTableModel = new CustomTableModel(
             ordersTable,
             tableClasses,
