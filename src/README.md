@@ -1,5 +1,5 @@
 # Meal Ordering Application
-A simple application used to order meals as seen in many companies. 
+A simple application used to order meals as seen in many companies. To start using the application, type number 1 into the password field to login to Administration Panel. Application is currently using ID numbers of users as login credential.
 
 ![Nothing To Order](graphics/EmptyOrderPanel.gif)
 
