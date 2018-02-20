@@ -1,6 +1,5 @@
 import java.awt.Component;
 import java.awt.Container;
-import java.sql.SQLException;
 import java.util.Enumeration;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonModel;
@@ -33,7 +32,7 @@ public class MealsPanel extends javax.swing.JPanel {
         loadAllergensLegendItems();
     }    
     
-    public void addDay(CustomJList day)
+    public void addDay(DailyMealsList day)
     {
         listsPanel.add(day);
     }
@@ -45,15 +44,11 @@ public class MealsPanel extends javax.swing.JPanel {
     
     private void checkForChanges()
     {
+        // if there are missmatches between stored meal selection and current meal selection
         if(storeChanges(false))
         {
-            try{
-                // refetch ordered meals
-                database.retrieve();
-            }catch(SQLException e)
-            {
-                e.printStackTrace();
-            }
+            database.retrieve(database.getUserAccount().getUserId());
+            
             fetchMeals = new FetchMeals(database, Integer.valueOf(shiftGroup.getSelection().getActionCommand()), this);
             fetchMeals.execute();
         }
@@ -63,10 +58,51 @@ public class MealsPanel extends javax.swing.JPanel {
         refreshGroupButtons();
     }
     
-    private void store(CustomJList list, boolean update, boolean delete)
+    private void store(DailyMealsList list, boolean update, boolean delete)
     {
         StoreMeals sm = new StoreMeals(database, list.getOldMealID(), list.getNewMealID(), update, delete);
         sm.execute();
+    }
+    
+    private boolean storeChanges(boolean storeChanges)
+    {
+        // if same shift is selected do nothing
+        if(previousShift == shiftGroup.getSelection())
+            return false;
+        
+        int option = -1;
+        for(int i = 0; i<listsPanel.getComponentCount(); i++)
+        {
+            DailyMealsList l = (DailyMealsList) listsPanel.getComponent(i);
+            
+            if(l.hasChanged())
+                // storeChanges on Confirm&Exit == true
+                if(storeChanges)
+                {
+                    store(l, l.hasPreviousOrderEntry(), (l.getSelectedIndex() == -1 && l.getOldMealID() > -1));
+                }
+                else
+                {
+                    option = JOptionPane.showConfirmDialog (null, "Would You Like to Save Your Changes First?","Warning",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE);
+                
+                    switch(option)
+                    {
+                        case 0: // yes
+                            storeChanges = true; // skip prompt for next changes
+                            // store first change
+                            store(l, l.hasPreviousOrderEntry(), (l.getSelectedIndex() == -1 && l.getOldMealID() > -1));
+                            break;
+                        case 1: // no
+                            return true;
+                        case 2: // cancel
+                            return false;
+                        default:
+                            break;
+                    }
+                }
+        }
+        
+        return true;
     }
     
     private void refreshGroupButtons()
@@ -83,46 +119,6 @@ public class MealsPanel extends javax.swing.JPanel {
     private void storePreviousShift()
     {
         previousShift = shiftGroup.getSelection();
-    }
-
-    private boolean storeChanges(boolean storeChanges)
-    {
-        // if same shift is selected do nothing
-        if(previousShift == shiftGroup.getSelection())
-            return false;
-        
-        int option = -1;
-        for(int i = 0; i<listsPanel.getComponentCount(); i++)
-        {
-            CustomJList l = (CustomJList) listsPanel.getComponent(i);
-            
-            if(l.hasChanged())
-                if(storeChanges)
-                {
-                    store(l, l.hasPreviousOrderEntry(), (l.getSelectedIndex() == -1 && l.getOldMealID() > -1));
-                }
-                else
-                {
-                    option = JOptionPane.showConfirmDialog (null, "Would You Like to Save Your Changes First?","Warning",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.WARNING_MESSAGE);
-                
-                    switch(option)
-                    {
-                        case 0: // yes
-                            storeChanges = true;
-                            // store first change
-                            store(l, l.hasPreviousOrderEntry(), (l.getSelectedIndex() == -1 && l.getOldMealID() > -1));
-                            break;
-                        case 1: // no
-                            return true;
-                        case 2: // cancel
-                            return false;
-                        default:
-                            break;
-                    }
-                }
-        }
-        
-        return true;
     }
     
     private void loadAllergensLegendItems()
