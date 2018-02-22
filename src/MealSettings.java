@@ -1,12 +1,17 @@
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,15 +26,9 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
- * @author markoc
+ * @author Marko Čirič <https://github.com/markocir>
  */
 public class MealSettings extends JPanel{
     private Database database = null;
@@ -42,6 +41,7 @@ public class MealSettings extends JPanel{
     private JButton editButton = new JButton("Edit");
     private JButton deleteButton = new JButton("Delete");
     private ArrayList<ShiftButton> shiftGroup = new ArrayList<>(3);
+    private MealSettings container;
     
     public MealSettings(Database database)
     {
@@ -49,6 +49,7 @@ public class MealSettings extends JPanel{
         this.setLayout(new java.awt.BorderLayout());
         initializeTable();
         shiftDisable(shiftNumber);
+        container = this;
     }
     
     public void initializeTable()
@@ -148,10 +149,26 @@ public class MealSettings extends JPanel{
         importButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt) {
                 actionSettings.clear(); // clear array list and set size to 0
-                importButtonActionPerformed();
+                try 
+                {
+                    actionSettings.add(new ImportMeals(container, database, (CustomTableModel)table.getModel()));
+                    
+                    for(ActionSettings as : actionSettings)
+                        as.execute();
+                } 
+                catch (FileNotFoundException ex) 
+                {
+                    JOptionPane.showConfirmDialog(
+                            container,
+                            "File should be located in \"import\" map", 
+                            "File Not Found", 
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+                }
+                catch (IOException ex)
+                {
+                     Logger.getLogger(MealSettings.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 
-                for(ActionSettings as : actionSettings)
-                    as.execute();
             }
         });
         
@@ -340,28 +357,22 @@ public class MealSettings extends JPanel{
             
             // on OK
             if(option == 0)
-                actionSettings.add(
-                    new EditMeal(
-                            this,
-                            database, 
-                            table, 
-                            selectedRow, 
-                            shiftNumber,
-                            editedMeal.getDate(),
-                            editedMeal.getMealNumber(),
-                            editedMeal.getDescription(),
-                            editedMeal.getAllergens()
-                    )
-                );
+            actionSettings.add(
+                new EditMeal(
+                        this,
+                        database, 
+                        table, 
+                        selectedRow, 
+                        shiftNumber,
+                        editedMeal.getDate(),
+                        editedMeal.getMealNumber(),
+                        editedMeal.getDescription(),
+                        editedMeal.getAllergens()
+                )
+            );
         }
     }
-    
-    private void importButtonActionPerformed()
-    {
-        actionSettings.add(new ImportMeals(this, database, (CustomTableModel)table.getModel()));
         
-    }
-    
     public int getShiftNumber()
     {
         return shiftNumber;
