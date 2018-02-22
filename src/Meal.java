@@ -1,6 +1,11 @@
+
+/**
+ *
+ * @author Marko Čirič <https://github.com/markocir>
+ */
 public class Meal 
 {
-    private final int id;
+    private int id;
     private final int mealNumber;
     private final int shift;
     private final String date;
@@ -45,5 +50,17 @@ public class Meal
     public String getAllergens()
     {
         return this.allergens;
+    }
+    
+    // used when importing meals
+    public void setId(int id)
+    {
+        this.id = id;
+    }
+    
+    @Override
+    public String toString()
+    {
+        return String.format("%d %d %d %s %s %s", this.id, this.mealNumber, this.shift, this.date, this.description, this.allergens);
     }
 }
