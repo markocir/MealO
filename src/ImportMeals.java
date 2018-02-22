@@ -44,7 +44,7 @@ class ImportMeals extends ActionSettings {
         InputStream input = null;
         try 
         {
-            input = new FileInputStream("src/import/Mealo_import_schem.xlsx");
+            input = new FileInputStream("src/import/Mealo_import_scheme.xlsx");
             
             Workbook wb = WorkbookFactory.create(input);
             sheet = wb.getSheetAt(0);
