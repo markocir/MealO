@@ -12,6 +12,10 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ *
+ * @author Marko Čirič <https://github.com/markocir>
+ */
 class Database {
     private boolean isUserFound = false;
     
@@ -313,6 +317,52 @@ class Database {
     }
     
     /**
+     * Used for importing meals into the database.
+     * Sets IDs to the meals imported and returns the list.
+     * @param mealList 
+     * @return 
+     */
+    public ArrayList<Meal> importMeals(ArrayList<Meal> mealList) throws SQLException
+    {
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+        try
+        {  
+            ps = connection.prepareStatement(
+                    "INSERT INTO mo_meals (mealNumber, shift, date, description, allergens) "
+                            + "VALUES(?,?,?,?,?)", 
+                    Statement.RETURN_GENERATED_KEYS);
+            
+            for(int i = 0; i < mealList.size(); i++)
+            {
+                Meal meal = mealList.get(i);
+
+                ps.setInt(1, meal.getMealNumber());
+                ps.setInt(2, meal.getShift());
+                ps.setString(3, meal.getDate());
+                ps.setString(4, meal.getDescription());
+                ps.setString(5, meal.getAllergens());
+                ps.executeUpdate();
+                
+                rs = ps.getGeneratedKeys();
+                rs.next();
+                mealList.get(i).setId(rs.getInt(1));
+            }
+        }
+        catch(SQLException ex)
+        {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+            
+        }
+        finally
+        {
+            closeResources(ps, rs);
+        }
+        
+        return mealList;
+    }
+    
+    /**
      * Used for INSERT, UPDATE and DELETE statements.
      * Return generated key or number of affected rows by the statement.
      * @param query
@@ -408,7 +458,7 @@ class Database {
      * @param mealNumber
      * @return 
      */
-    public int getCountOfMeals(String date, int shiftNumber, int mealNumber)
+    public int getCountOfMealOrders(String date, int shiftNumber, int mealNumber)
     {
         ResultSet rs = null;
         Statement s = null;
@@ -442,7 +492,7 @@ class Database {
     
     /**
      * Counts ordered meals by given date and shift.
-     * 
+     * Used when printing item
      * @param date
      * @param shiftNumber
      * @return 
@@ -572,7 +622,7 @@ class Database {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     public void printUserData()
     {
         System.out.println(account.toString());
