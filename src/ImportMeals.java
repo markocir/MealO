@@ -115,6 +115,15 @@ class ImportMeals extends ActionSettings {
             {
                 Logger.getLogger(ImportMeals.class.getName()).log(Level.SEVERE, null, ex);
             }
+            catch (IllegalStateException ex)
+            {
+                JOptionPane.showConfirmDialog(
+                            container,
+                            "Re-check the file data and import again:\n"
+                                    + "Check for correct cell values.", 
+                            "Wrong File Structure", 
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+            }
             catch (NullPointerException ex)
             {
                 JOptionPane.showConfirmDialog(
