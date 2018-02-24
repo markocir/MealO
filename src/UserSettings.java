@@ -1,12 +1,18 @@
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.SpringLayout;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
@@ -36,6 +42,10 @@ public class UserSettings extends JPanel{
         deleteButton.setEnabled(false);
         editButton.setEnabled(false);
         
+        // declare filter
+        JLabel filterLabel = new JLabel("Filter: ");
+        JTextField filterTextField = new JTextField();
+        
         JPanel panelTop = new JPanel();
         
         table = new CustomJTable();
@@ -44,23 +54,28 @@ public class UserSettings extends JPanel{
         
         this.add(panelTop, java.awt.BorderLayout.PAGE_START);
         this.add(tableScrollPane, java.awt.BorderLayout.CENTER);
+        
         // top panel 
         SpringLayout layout = new SpringLayout();
         panelTop.setLayout(layout);
         
+        panelTop.add(filterTextField);
+        panelTop.add(filterLabel);
         panelTop.add(addButton);
         panelTop.add(editButton);
         panelTop.add(deleteButton);
         
-        layout.putConstraint(
-                SpringLayout.EAST, addButton, -5, SpringLayout.WEST, editButton);
-        layout.putConstraint(
-                SpringLayout.EAST, editButton, -5, SpringLayout.WEST, deleteButton);
-        layout.putConstraint(
-                SpringLayout.SOUTH, panelTop, 5, SpringLayout.SOUTH, addButton);    
-        layout.putConstraint(
-                SpringLayout.EAST, deleteButton, 0, SpringLayout.EAST, panelTop);
+        layout.putConstraint(SpringLayout.EAST, filterLabel, -5, SpringLayout.WEST, filterTextField);
+        layout.putConstraint(SpringLayout.EAST, filterTextField, -5, SpringLayout.WEST, addButton);
+        layout.putConstraint(SpringLayout.EAST, addButton, -5, SpringLayout.WEST, editButton);
+        layout.putConstraint(SpringLayout.EAST, editButton, -5, SpringLayout.WEST, deleteButton);
+        layout.putConstraint(SpringLayout.EAST, deleteButton, 0, SpringLayout.EAST, panelTop);
+        layout.putConstraint(SpringLayout.SOUTH, panelTop, 5, SpringLayout.SOUTH, addButton);    
+        layout.putConstraint(SpringLayout.SOUTH, filterTextField, -5, SpringLayout.SOUTH, panelTop);
+        layout.putConstraint(SpringLayout.SOUTH, filterLabel, -10, SpringLayout.SOUTH, panelTop);
         
+        int defaultTextFieldHeight = (int)filterTextField.getPreferredSize().getHeight();
+        filterTextField.setPreferredSize(new Dimension(200, defaultTextFieldHeight));
         addButton.setMargin(new Insets(10,10,10,10));
         editButton.setMargin(new Insets(10,10,10,10));
         deleteButton.setMargin(new Insets(10,10,10,10));
@@ -106,6 +121,31 @@ public class UserSettings extends JPanel{
         table.setRowSorter(sorter);
         
         table.setDefaultRenderer(Object.class, new CustomTableCellRenderer());
+        
+        filterTextField.addKeyListener(new KeyListener(){
+            @Override
+            public void keyTyped(KeyEvent e) {
+                // do nothing
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                // do nothing
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                TableRowSorter trs = (TableRowSorter)table.getRowSorter();
+                String filterText = filterTextField.getText();
+                if(filterText.trim().length() == 0)
+                    trs.setRowFilter(null);
+                else
+                    trs.setRowFilter(RowFilter.regexFilter("(?i)" + filterText.trim()));
+                
+                table.setDefaultRenderer(Object.class, new CustomTableCellRenderer(filterText));
+            }
+            
+        });
         
         addButton.addActionListener(new java.awt.event.ActionListener() {
             @Override
