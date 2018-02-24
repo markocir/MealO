@@ -28,3 +28,7 @@ Admin panel offers to view order statistics and print the next days shifts order
 
 Meals that have orders can be printed showing the count of orders.
 (the "x"-es are symbolic and act as placeholders for multi-digit numbers in this example)
+
+![Table Filter Highlight Feature](graphics/TableFilterHighlightFeature.gif)
+
+Supports table filtering with match highlighter.
