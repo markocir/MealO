@@ -1,11 +1,13 @@
 import java.awt.BorderLayout;
-import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,6 +20,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.SpringLayout;
@@ -57,6 +61,10 @@ public class MealSettings extends JPanel{
         // disable buttons on table initialization
         editButton.setEnabled(false);
         deleteButton.setEnabled(false);
+        
+        // declare filter
+        JLabel filterLabel = new JLabel("Filter: ");
+        JTextField filterTextField = new JTextField();
         
         // declare buttons
         JButton importButton = new JButton("Import Meals");
@@ -102,6 +110,8 @@ public class MealSettings extends JPanel{
         
         // add components to top panel
         panelTop.add(shiftName);
+        panelTop.add(filterLabel);
+        panelTop.add(filterTextField);
         panelTop.add(importButton);
         panelTop.add(editButton);
         panelTop.add(deleteButton);
@@ -111,6 +121,10 @@ public class MealSettings extends JPanel{
         deleteButton.setMargin(new Insets(10,10,10,10));
         importButton.setMargin(new Insets(10,10,10,10));        
         
+        // set up filter text field
+        int textFieldDefaultHeight = (int)filterTextField.getPreferredSize().getHeight();
+        filterTextField.setPreferredSize(new Dimension(200, textFieldDefaultHeight));
+        
         // add buttons to bottom panel
         panelBottom.add(morningShift);
         panelBottom.add(afternoonShift);
@@ -118,6 +132,11 @@ public class MealSettings extends JPanel{
         
         // positionate components in top panel
         layoutTop.putConstraint(SpringLayout.SOUTH, panelTop, 5, SpringLayout.SOUTH, importButton);    
+        
+        layoutTop.putConstraint(SpringLayout.SOUTH, filterLabel, -10, SpringLayout.SOUTH, panelTop);
+        layoutTop.putConstraint(SpringLayout.SOUTH, filterTextField, -5, SpringLayout.SOUTH, panelTop);
+        layoutTop.putConstraint(SpringLayout.EAST, filterLabel, -5, SpringLayout.WEST, filterTextField);
+        layoutTop.putConstraint(SpringLayout.EAST, filterTextField, -5, SpringLayout.WEST, importButton);
         layoutTop.putConstraint(SpringLayout.EAST, importButton, -5, SpringLayout.WEST, editButton);
         layoutTop.putConstraint(SpringLayout.EAST, editButton, -5, SpringLayout.WEST, deleteButton);
         layoutTop.putConstraint(SpringLayout.EAST, deleteButton, 0, SpringLayout.EAST, panelTop);
@@ -144,6 +163,32 @@ public class MealSettings extends JPanel{
                 // do nothing
             }
             
+        });
+        
+        filterTextField.addKeyListener(new KeyListener(){
+            @Override
+            public void keyTyped(KeyEvent e) {
+                // do nothing
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                // do nothing
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                TableRowSorter rs = (TableRowSorter) table.getRowSorter();
+                String filterText = filterTextField.getText();
+                if (filterText.trim().length() == 0) {
+                    rs.setRowFilter(null);
+                } else {
+                    rs.setRowFilter(RowFilter.regexFilter("(?i)" + filterText.trim()));
+                }
+                
+                table.setDefaultRenderer(Object.class, new CustomTableCellRenderer(filterText));
+            }
+        
         });
         
         importButton.addActionListener(new ActionListener(){
@@ -266,7 +311,7 @@ public class MealSettings extends JPanel{
         
         table.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
         
-        columnModel.getColumn(1).setPreferredWidth(80);
+        columnModel.getColumn(1).setPreferredWidth(100);
         columnModel.getColumn(2).setPreferredWidth(50);    
         columnModel.getColumn(3).setPreferredWidth(680);
         columnModel.getColumn(4).setPreferredWidth(200);
