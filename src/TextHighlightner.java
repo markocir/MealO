@@ -40,17 +40,13 @@ public class TextHighlightner{
                 if(position < i)
                     sb.append(text.substring(position, i));
                 
-                sb.append("<span style='color:#000000; background-color: #FFFF00;'>");
-                
-                int step = 0;
-                while(text.length() > i && textToHighlight.length() > step)
-                    if (textToMatch.charAt(i + step) == textToHighlight.charAt(step))
-                        sb.append(text.charAt(i + step++));
-                
+                if(i+textToHighlight.length() <= text.length())
+                {
+                    sb.append("<span style='color:#000000; background-color: #FFFF00;'>");
+                    sb.append(text.substring(i, i+textToHighlight.length()));
+                    sb.append("</span>");
+                }
                 i += textToHighlight.length();
-
-                sb.append("</span>");
-                
                 position = i;
             }
             
