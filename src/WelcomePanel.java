@@ -1,4 +1,6 @@
 import java.awt.Container;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 
 /**
@@ -13,15 +15,25 @@ public class WelcomePanel extends javax.swing.JPanel {
     
     public WelcomePanel()
     {
-        initComponents();
+        // do nothing
     }
     
     public WelcomePanel(Container rp, MealsPanel op) {
         rootPane = rp;
         orderPanel = op;
         initComponents();
+        
+        DelayedDocumentListener listener = new DelayedDocumentListener(200, new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                login();
+            }
+            
+        }, false);
+        
+        passwordField.getDocument().addDocumentListener(listener);
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -32,12 +44,6 @@ public class WelcomePanel extends javax.swing.JPanel {
     private void initComponents() {
 
         passwordField = new javax.swing.JPasswordField();
-
-        passwordField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                passwordFieldActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -56,42 +62,49 @@ public class WelcomePanel extends javax.swing.JPanel {
                 .addContainerGap(705, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    public javax.swing.JPasswordField getField()
+        
+    public void startDatabase()
     {
-        return passwordField;
+        database = new Database();
+        passwordField.setEnabled(true);
     }
-    private void passwordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordFieldActionPerformed
-        if(passwordField.getPassword().length != 0)
-        {
-            char[] passwordArray = passwordField.getPassword();
-            StringBuilder password = new StringBuilder();
-            password.append(passwordArray);
+    
+    private void login()
+    {
+        char[] passwordArray = passwordField.getPassword();
+        StringBuilder password = new StringBuilder();
+        password.append(passwordArray);
 
-                database = new Database(Integer.parseInt(password.toString()));
-                if(!database.isUserFound())
+            int input = Integer.valueOf(password.toString());
+            database.retrieve(input);
+
+            if(!database.isUserFound())
+            {
+                JOptionPane.showConfirmDialog(this, "Entered key does not exist.", "User Not Found", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+            }
+            else
+            {
+                this.setVisible(false);
+                if(database.getUserAccount().isSuperUser())
                 {
-                    JOptionPane.showConfirmDialog(this, "Entered key does not exist.", "User Not Found", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+                    settingsPanel = new SettingsPanel(database, rootPane, this);
+                    rootPane.add(settingsPanel);
+                    settingsPanel.setVisible(true);
                 }
                 else
                 {
-                    this.setVisible(false);
-                    if(database.getUserAccount().isSuperUser())
-                    {
-                        settingsPanel = new SettingsPanel(database, rootPane, this);
-                        rootPane.add(settingsPanel);
-                        settingsPanel.setVisible(true);
-                    }
-                    else
-                    {
-                        orderPanel = new MealsPanel(database, rootPane, this);
-                        rootPane.add(orderPanel);
-                        orderPanel.setVisible(true);
-                    }
+                    orderPanel = new MealsPanel(database, rootPane, this);
+                    rootPane.add(orderPanel);
+                    orderPanel.setVisible(true);
                 }
-        }
-    }//GEN-LAST:event_passwordFieldActionPerformed
-
+            }
+    }
+    
+    public javax.swing.JPasswordField getPasswordField()
+    {
+        return passwordField;
+    }
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPasswordField passwordField;
