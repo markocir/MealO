@@ -138,10 +138,9 @@ public class SettingsPanel extends javax.swing.JPanel {
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         database.disconnect();
         this.setVisible(false);
-        container.add(welcomePanel);
         welcomePanel.setVisible(true);
-        welcomePanel.getField().setText("");
-        welcomePanel.getField().requestFocusInWindow();
+        welcomePanel.getPasswordField().setText("");
+        welcomePanel.getPasswordField().requestFocusInWindow();
         container.validate();
     }//GEN-LAST:event_exitButtonActionPerformed
 
