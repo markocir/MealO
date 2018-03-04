@@ -265,8 +265,8 @@ public class MealsPanel extends javax.swing.JPanel {
         this.setVisible(false);
         container.add(welcomePanel);
         welcomePanel.setVisible(true);
-        welcomePanel.getField().setText("");
-        welcomePanel.getField().requestFocusInWindow();
+        welcomePanel.getPasswordField().setText("");
+        welcomePanel.getPasswordField().requestFocusInWindow();
         container.validate();
     }//GEN-LAST:event_ConfirmAndExitMouseReleased
 
