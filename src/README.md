@@ -32,3 +32,7 @@ Meals that have orders can be printed showing the count of orders.
 ![Table Filter Highlight Feature](graphics/TableFilterHighlightFeature.gif)
 
 Supports table filtering with match highlighter.
+
+![Order Claims](graphics/OrderClaims.gif)
+
+Enables a user to claim his ordered meal. The table adds a row with ordered meal data.
