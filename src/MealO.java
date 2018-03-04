@@ -1,6 +1,8 @@
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 /*
@@ -21,6 +23,7 @@ public class MealO extends JFrame {
     public MealO() {
         initComponents();
         
+        welcomePanel.startDatabase();
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -88,16 +91,19 @@ public class MealO extends JFrame {
             @Override
             public void run()
             {
-                try {
+                try 
+                {
                     if(DriverManager.getDrivers().hasMoreElements())
                         DriverManager.getConnection("jdbc:derby:;shutdown=true");
-                } catch (SQLException ex) {
-                    //ignore
+                } 
+                catch (SQLException ex) 
+                {
+                    Logger.getLogger(MealO.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
     }
-    
+        
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private MealsPanel orderPanel;
     private SettingsPanel settingsPanel;
