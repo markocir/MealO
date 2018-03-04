@@ -1,6 +1,5 @@
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,114 +12,163 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Starts a {@code NetworkServerUtility} and offers database manipulation methods 
+ * needed by Meal Ordering Application
  * @author Marko Čirič <https://github.com/markocir>
  */
-class Database {
+class Database{
     private boolean isUserFound = false;
     
-    private static final String DATABASE_URL = "jdbc:derby:src/db";
+    private static final String DATABASE = "src/db";
+    private static final String ATTRIBUTES = null;
     private static final String USERNAME = "root";
     private static final String PASSWORD = "root";
     
     private String DEFAULT_QUERY = "SELECT * FROM mo_users WHERE user_id = ?";
     private Connection connection;
     private Account account;
+    
     private final int numberOfMealsPerDay = 6;
     
-    private final int numberOfWorkdays = 6; 
+    private final int numberOfWorkdays = 6;
     
-    public Database(int accountNumber)
+    private final NetworkServerUtility NSU;
+    private Statement statement = null;
+    private PreparedStatement preparedStatement = null;
+    private ResultSet resultSet = null;
+    
+    public Database()
     {
-        retrieve(accountNumber); 
+        NSU = new NetworkServerUtility(DATABASE, ATTRIBUTES, USERNAME, PASSWORD);
+        try 
+        {
+            NSU.startNetworkServer();
+            connection = NSU.getEmbeddedConnection();
+        } 
+        catch (Exception ex) 
+        {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-
+    
+    /**
+     * Retrieves data from database 
+     * @param accountNumber 
+     */
     public void retrieve(int accountNumber)
     {
         try {
-            connection = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD);
-            PreparedStatement findUserStatement = connection.prepareStatement(DEFAULT_QUERY,
+            
+            connection = NSU.getEmbeddedConnection();
+                    
+            preparedStatement = connection.prepareStatement(DEFAULT_QUERY,
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
             
-            findUserStatement.setInt(1, accountNumber);
-            ResultSet rs = findUserStatement.executeQuery();
+            preparedStatement.setInt(1, accountNumber);
+            resultSet = preparedStatement.executeQuery();
             
-            if(!rs.next())
+            if(!resultSet.next())
             {
                 disconnect();
                 return;
             }
-            else
-                isUserFound = true;
             
-            account = new Account(connection, rs.getInt("user_id"), rs.getString("firstName"), rs.getString("lastName"), rs.getInt("superUser"));
-            
-            rs.close();
-            findUserStatement.close();
-            
+            account = new Account(
+                    connection, 
+                    resultSet.getInt("user_id"), 
+                    resultSet.getString("firstName"), 
+                    resultSet.getString("lastName"), 
+                    resultSet.getInt("superUser"));
+                        
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        finally
+        {
+            closeResources();
         }
 
     }
     
+    /**
+     * Checks if user has been found
+     * @return a boolean value of user found
+     */
     public boolean isUserFound()
     {
-        return isUserFound;
+        return account != null;
     }
     
+    /**
+     * @return
+     *        {@code Account} object
+     */
     public Account getUserAccount()
     {
         return account;
     }
     
+    /**
+     * @return 
+     *        full name in format: firstName lastName
+     */
     public String getFullName() 
     {
         return String.format("%s %s", account.getFirstName(), account.getLastName());
     }
-
-    private void closeResources(Statement s, ResultSet rs)
+    
+    /**
+     * Closes forwarded resources
+     * @param ps
+     *          {@code PreparedStatement} to be closed
+     * @param rs 
+     *          {@code ResultSet} to be closed
+     */
+    private void closeResources()
     {
         try {
-            if (s != null) {
-                s.close();
+            if (preparedStatement != null) 
+            {
+                preparedStatement.close();
             }
-            if (rs != null) {
-                rs.close();
+            
+            if(statement != null)
+            {
+                statement.close();
+            }
+            
+            if (resultSet != null) 
+            {
+                resultSet.close();
             }
         } catch (SQLException ex) {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    private void closeResources(PreparedStatement ps, ResultSet rs)
-    {
-        try {
-            if (ps != null) {
-                ps.close();
-            }
-            if (rs != null) {
-                rs.close();
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
+    /**
+     * Returns an array of users with details
+     * @return 
+     *        {@code ArrayList<User>} of all users in a database
+     */
     public ArrayList<User> getUsers()
     {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
         ArrayList<User> userList = new ArrayList<>(1);
         
         try {
-            ps = connection.prepareStatement("SELECT * FROM mo_users ORDER BY user_id ASC");
-            rs = ps.executeQuery();
+            preparedStatement = connection.prepareStatement("SELECT * FROM mo_users ORDER BY user_id ASC");
+            resultSet = preparedStatement.executeQuery();
             
-            while(rs.next())
+            while(resultSet.next())
             {
-                userList.add(new User(rs.getInt("user_id"), rs.getString("firstName"), rs.getString("lastName"), (rs.getInt("superUser") == 0) ? false : true));
+                userList.add(new User(
+                        resultSet.getInt("user_id"), 
+                        resultSet.getString("firstName"), 
+                        resultSet.getString("lastName"), 
+                        (resultSet.getInt("superUser") == 0) ? false : true));
             }
             
         } catch (SQLException ex) {
@@ -128,18 +176,20 @@ class Database {
         }
         finally
         {
-            closeResources(ps, rs);
+            closeResources();
         }
         
         return userList;
     }
     
     /**
-     * 
+     * Returns a {@code String} of valid dates. 
      * @return 
      *        Returns a {@code String} of valid dates.
+     * @see 
+     *        Calendar#DAY_OF_WEEK
      */
-    public String getWorkDays()
+    public String getWorkdays()
     {
         /**
         *   1       2        3         4         5        6        7
@@ -151,19 +201,21 @@ class Database {
     }
     
     /**
-     * Returns dates specified by {@link Database#getWorkDays} method.
-     * @param offset 
-     *        Can be a negative or a positive number, 0 represents present day.
-     * @param numberOfDates 
-     *        Determines how many dates should be returned.
+     * Returns dates specified by {@link Database#getWorkdays} method.
+     * @param   offset 
+     *          Can be a negative or a positive number, 0 represents a present day.
+     * @param   numberOfDates 
+     *          Determines how many dates should be returned.
      * @return 
-     *        Returns a {@codeString[numberOfDates]} array.
-     *        String format example: Sunday 2018-02-25
+     *          Returns a {@code String[numberOfDates]} object.
+     *          String format example: Sunday 2018-02-25
+     * @see 
+     *          Database#getWorkdays
      * 
      */
     public String[] getUpcommingDates(int offset, int numberOfDates)
     {
-        String workDays = getWorkDays();
+        String workDays = getWorkdays();
         
         String[] dates = new String[numberOfDates];
         
@@ -184,14 +236,22 @@ class Database {
                         calendar.get(Calendar.DAY_OF_MONTH));
             }
         }
+        
         return dates;
     }
     
     /**
-     * Method returns the day name of the date provided.
+     * Method splits the provided date, sets the calendar to that date and 
+     * returns the days name.
      * 
-     * @param date String format: YYYY-MM-DD
-     * @return Day name of that date
+     * @param   date
+     *          String format: YYYY-MM-DD
+     * @return 
+     *          Day name of that date
+     * 
+     * @see Calendar#set(int, int) 
+     * @see Calendar#get(int) 
+     * @see Calendar#DAY_OF_WEEK
      */
     public String getDayName(String date)
     {
@@ -203,33 +263,51 @@ class Database {
         return dayNames[calendar.get(Calendar.DAY_OF_WEEK)];
     }
     
+    /**
+     * Check and return true if meal {@ id} is ordered.
+     * @param   id
+     *          meal id
+     * @return 
+     *          true if meal is ordered else return false.
+     */
     public boolean isOrdered(int id)
     {
-        return (account.getOrderedMeals().stream().filter(p -> p.getId() == id).count() == 1);
+        return (account.getOrderedMeals().stream().filter(orderedItem -> orderedItem.getId() == id).count() == 1);
     }
 
+    /**
+     * Populates a prepared statement with data provided and fetches the meals
+     * from the database.
+     * @param   date
+     *          date of the day we want to get meals. Date format: YYYY-MM-DD
+     * @param shiftNumber
+     *          shift of which we want to get the meals
+     * @return 
+     *          {@code ArrayList<MealOrderItem>} 
+     */
     public ArrayList<MealOrderItem> getMealsByDate(String date, int shiftNumber)
     {
-        ResultSet rs = null;
-        PreparedStatement ps = null;
-        ArrayList<MealOrderItem> dailyMeals = new ArrayList<>(5);
+        ArrayList<MealOrderItem> dailyMeals = null;
         
         try
         {
-            ps = connection.prepareStatement("SELECT * FROM mo_meals WHERE date = ? AND shift = ? ORDER BY mealNumber ASC", 
-                    ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ps.setString(1, date);
-            ps.setInt(2, shiftNumber);
+            dailyMeals = new ArrayList<>(getNumberOfMealsPerDay());
+            preparedStatement = connection.prepareStatement("SELECT * FROM mo_meals WHERE date = ? AND shift = ? ORDER BY mealNumber ASC");
+            preparedStatement.setString(1, date);
+            preparedStatement.setInt(2, shiftNumber);
             
-            rs = ps.executeQuery();
-            rs.last();
+            resultSet = preparedStatement.executeQuery();
             
-            dailyMeals = new ArrayList<>(rs.getRow());
-            
-            rs.beforeFirst();
-            while(rs.next())
+            while(resultSet.next())
             {
-                MealOrderItem meal = new MealOrderItem(rs.getInt("meal_id"), rs.getInt("mealNumber"), rs.getInt("shift"), rs.getString("date"), rs.getString("description"), rs.getString("allergens"), isOrdered(rs.getInt("meal_id")));
+                MealOrderItem meal = new MealOrderItem(
+                        resultSet.getInt("meal_id"), 
+                        resultSet.getInt("mealNumber"), 
+                        resultSet.getInt("shift"), 
+                        resultSet.getString("date"), 
+                        resultSet.getString("description"), 
+                        resultSet.getString("allergens"), 
+                        isOrdered(resultSet.getInt("meal_id")));
                 dailyMeals.add(meal);
             }
         }
@@ -239,33 +317,41 @@ class Database {
         }
         finally
         {
-            closeResources(ps, rs);
+            closeResources();
         }
         
         return dailyMeals;
     }
     
+    /**
+     * Populates a prepared statement with data provided and fetches the meals
+     * from the database.
+     * @param   shiftNumber
+     *          
+     * @return 
+     */
     public ArrayList<Meal> getMealsByShift(int shiftNumber)
     {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
         ArrayList<Meal> list = null;
         
         try
         {
-            ps = connection.prepareStatement("SELECT * FROM mo_meals WHERE shift = ? ORDER BY meal_id ASC",
-                    ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            ps.setInt(1, shiftNumber);
+            preparedStatement = connection.prepareStatement("SELECT * FROM mo_meals WHERE shift = ? ORDER BY meal_id ASC");
+            preparedStatement.setInt(1, shiftNumber);
                         
-            rs = ps.executeQuery();
+            resultSet = preparedStatement.executeQuery();
             
-            rs.last();
-            list = new ArrayList<>(rs.getRow());
+            list = new ArrayList<>();
             
-            rs.beforeFirst();
-            while(rs.next())
+            while(resultSet.next())
             {
-                Meal meal = new Meal(rs.getInt("meal_id"), rs.getInt("mealNumber"), rs.getInt("shift"), rs.getString("date"), rs.getString("description"), rs.getString("allergens"));
+                Meal meal = new Meal(
+                        resultSet.getInt("meal_id"), 
+                        resultSet.getInt("mealNumber"), 
+                        resultSet.getInt("shift"), 
+                        resultSet.getString("date"), 
+                        resultSet.getString("description"), 
+                        resultSet.getString("allergens"));
                 list.add(meal);
             }
             
@@ -276,33 +362,33 @@ class Database {
         }
         finally
         {
-            closeResources(ps, rs);
+            closeResources();
         }
         
         return list;
     }
     
     /**
-     * Used for SELECT statement
-     * @param query
-     * @return row count
+     * Used for SELECT statement.
+     * @param   query
+     *          query to be executed
+     * @return 
+     *          row count
      */
     public int executeQueryGetRowCount(String query)
     {
         int result = -1;
-        Statement s = null;
-        ResultSet rs = null;
         
         try 
         {
-            s = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+            statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
             
-            rs = s.executeQuery(query);
+            resultSet = statement.executeQuery(query);
             
-            rs.last();
+            resultSet.last();
             
-            result = rs.getRow();
+            result = resultSet.getRow();
         } 
         catch (SQLException ex) 
         {
@@ -310,7 +396,7 @@ class Database {
         }
         finally
         {
-            closeResources(s, rs);
+            closeResources();
         }
         
         return result;
@@ -321,14 +407,13 @@ class Database {
      * Sets IDs to the meals imported and returns the list.
      * @param mealList 
      * @return 
+     *        A list of meals imported to database
      */
     public ArrayList<Meal> importMeals(ArrayList<Meal> mealList) throws SQLException
     {
-        ResultSet rs = null;
-        PreparedStatement ps = null;
         try
         {  
-            ps = connection.prepareStatement(
+            preparedStatement = connection.prepareStatement(
                     "INSERT INTO mo_meals (mealNumber, shift, date, description, allergens) "
                             + "VALUES(?,?,?,?,?)", 
                     Statement.RETURN_GENERATED_KEYS);
@@ -337,26 +422,25 @@ class Database {
             {
                 Meal meal = mealList.get(i);
 
-                ps.setInt(1, meal.getMealNumber());
-                ps.setInt(2, meal.getShift());
-                ps.setString(3, meal.getDate());
-                ps.setString(4, meal.getDescription());
-                ps.setString(5, meal.getAllergens());
-                ps.executeUpdate();
+                preparedStatement.setInt(1, meal.getMealNumber());
+                preparedStatement.setInt(2, meal.getShift());
+                preparedStatement.setString(3, meal.getDate());
+                preparedStatement.setString(4, meal.getDescription());
+                preparedStatement.setString(5, meal.getAllergens());
+                preparedStatement.executeUpdate();
                 
-                rs = ps.getGeneratedKeys();
-                rs.next();
-                mealList.get(i).setId(rs.getInt(1));
+                resultSet = preparedStatement.getGeneratedKeys();
+                resultSet.next();
+                mealList.get(i).setId(resultSet.getInt(1));
             }
         }
         catch(SQLException ex)
         {
             Logger.getLogger(Database.class.getName()).log(Level.SEVERE, null, ex);
-            
         }
         finally
         {
-            closeResources(ps, rs);
+            closeResources();
         }
         
         return mealList;
@@ -374,27 +458,20 @@ class Database {
     public int executeQuery(String query, boolean getGeneratedKey)
     {
         int result = -1;
-        ResultSet rs = null;
-        Statement s = null;
         
         try
         {
-            s = connection.createStatement();
+            statement = connection.createStatement();
             
             if(getGeneratedKey)
             {
-                s.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
-                rs = s.getGeneratedKeys();
+                statement.executeUpdate(query, Statement.RETURN_GENERATED_KEYS);
+                resultSet = statement.getGeneratedKeys();
+                result = resultSet.getInt(1);
             }
             else
             {
-                result = s.executeUpdate(query);
-            }
-            
-            
-            if(rs != null && rs.next())
-            {
-                result = rs.getInt(1);
+                result = statement.executeUpdate(query);
             }
         }
         catch(SQLException e)
@@ -403,7 +480,7 @@ class Database {
         }
         finally
         {
-            closeResources(s, rs);
+            closeResources();
         }
         
         return result;
@@ -415,26 +492,24 @@ class Database {
      */
     public String[] getGroupedMealDates()
     {
-        ResultSet rs = null;
-        Statement s = null;
         String[] dates = null;
         try
         {
-            s = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+            statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_READ_ONLY);
             
-            rs = s.executeQuery("SELECT date FROM mo_meals GROUP BY date ORDER BY date ASC");
+            resultSet = statement.executeQuery("SELECT date FROM mo_meals GROUP BY date ORDER BY date ASC");
             
-            rs.last(); // move to last row
-            dates = new String[rs.getRow()]; // set array fields number
+            resultSet.last(); // move to last row
+            dates = new String[resultSet.getRow()]; // set array fields number
             
-            rs.beforeFirst(); // move before first row
+            resultSet.beforeFirst(); // move before first row
             
             int i = 0;
             
-            while(rs.next())
+            while(resultSet.next())
             {
-                dates[i++] = rs.getString("date");
+                dates[i++] = resultSet.getString("date");
             }
         }
         catch(SQLException ex)
@@ -443,7 +518,7 @@ class Database {
         }
         finally
         {
-            closeResources(s, rs);
+            closeResources();
         }
         
         return dates;
@@ -460,23 +535,21 @@ class Database {
      */
     public int getCountOfMealOrders(String date, int shiftNumber, int mealNumber)
     {
-        ResultSet rs = null;
-        Statement s = null;
         int count = 0;
         
         try
         {
-            s = connection.createStatement();
+            statement = connection.createStatement();
             String query = String.format("SELECT count(mo.user_id) countOrders, mo.meal_id, mm.date, mm.mealNumber "
                     + "FROM mo_orders mo "
                     + "INNER JOIN mo_meals mm ON mo.meal_id = mm.meal_id "
                     + "WHERE mm.date = '%s' AND mm.shift = %d AND mm.mealNumber = %d "
                     + "GROUP BY mo.meal_id, mm.date, mm.mealNumber ", date, shiftNumber, mealNumber);
 
-            rs = s.executeQuery(query);
+            resultSet = statement.executeQuery(query);
 
-            if(rs.next())
-                count = rs.getInt("countOrders");
+            if(resultSet.next())
+                count = resultSet.getInt("countOrders");
         }
         catch(SQLException ex)
         {
@@ -484,7 +557,7 @@ class Database {
         }
         finally
         {
-            closeResources(s, rs);
+            closeResources();
         }
         
         return count;
@@ -492,20 +565,18 @@ class Database {
     
     /**
      * Counts ordered meals by given date and shift.
-     * Used when printing item
+     * Used when printing item.
      * @param date
      * @param shiftNumber
      * @return 
      */
     public ArrayList<MealPrintItem> getCountOfMeals(String date, int shiftNumber)
     {
-        ResultSet rs = null;
-        Statement s = null;
         ArrayList<MealPrintItem> mealList = new ArrayList<>(getNumberOfMealsPerDay());
         
         try
         {
-            s = connection.createStatement();
+            statement = connection.createStatement();
             String query = String.format("SELECT count(mo.user_id) countOrders, mo.meal_id, mm.mealNumber, mm.description, mm.allergens "
                 + "FROM mo_orders mo "
                 + "INNER JOIN mo_meals mm ON mo.meal_id = mm.meal_id "
@@ -513,10 +584,17 @@ class Database {
                 + "GROUP BY mo.meal_id, mm.mealNumber, mm.description, mm.allergens "
                 + "ORDER BY mm.mealNumber ASC", date, shiftNumber);
 
-            rs = s.executeQuery(query);
+            resultSet = statement.executeQuery(query);
 
-            while(rs.next())
-                mealList.add(new MealPrintItem(rs.getInt("meal_id"), rs.getInt("mealNumber"), shiftNumber, date, rs.getString("description"), rs.getString("allergens"), rs.getInt("countOrders")));
+            while(resultSet.next())
+                mealList.add(new MealPrintItem(
+                        resultSet.getInt("meal_id"), 
+                        resultSet.getInt("mealNumber"), 
+                        shiftNumber, 
+                        date, 
+                        resultSet.getString("description"),
+                        resultSet.getString("allergens"), 
+                        resultSet.getInt("countOrders")));
         }
         catch(SQLException ex)
         {
@@ -524,7 +602,7 @@ class Database {
         }
         finally
         {
-            closeResources(s, rs);
+            closeResources();
         }
         
         return mealList;
@@ -535,24 +613,22 @@ class Database {
      */
     public String[] executeQueryPastPrints(String date, int shift)
     {
-        ResultSet rs = null;
-        Statement s = null;
-        String[] results = new String[0];
+        String[] results = null;
         
         try
         {
-            s = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            statement = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             String query = String.format("SELECT * FROM mo_prints WHERE shift = %d AND date < '%s' ORDER BY print_id ASC", shift, date);
-            rs = s.executeQuery(query);
+            resultSet = statement.executeQuery(query);
             
-            rs.last();
-            results = new String[rs.getRow()];
+            resultSet.last();
+            results = new String[resultSet.getRow()];
             
-            rs.beforeFirst();
+            resultSet.beforeFirst();
             
             int i = 0;
-            while(rs.next())
-                results[i++] = rs.getString("date");
+            while(resultSet.next())
+                results[i++] = resultSet.getString("date");
                 
         }
         catch(SQLException ex)
@@ -561,32 +637,46 @@ class Database {
         }
         finally
         {
-            closeResources(s, rs);
+            closeResources();
         }
         
         return results;
     }
     
+    /**
+     * Populates a prepared statement with data provided and fetches the meals IDs.
+     * 
+     * @param   date
+     *          Filter meals by this date.
+     * @param   shift
+     *          Filter meals by this shift.
+     * @return 
+     *          Array of ints found.
+     */
     public int[] executeQueryGetMealId(String date, int shift)
     {
-        ResultSet rs = null;
-        Statement s = null;
         int[] results = new int[0];
         
         try
         {
-            s = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-            String query = String.format("SELECT * FROM mo_meals WHERE shift = %d AND date = '%s'", shift, date);
-            rs = s.executeQuery(query);
+            preparedStatement = connection.prepareStatement(
+                    "SELECT * FROM mo_meals WHERE shift = ? AND date = ?", 
+                    ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY
+            );
             
-            rs.last();
-            results = new int[rs.getRow()];
+            preparedStatement.setInt(1, shift);
+            preparedStatement.setString(2, date);
             
-            rs.beforeFirst();
+            resultSet = preparedStatement.executeQuery();
+            
+            resultSet.last();
+            results = new int[resultSet.getRow()];
+            
+            resultSet.beforeFirst();
             
             int i = 0;
-            while(rs.next())
-                results[i++] = rs.getInt("meal_id");
+            while(resultSet.next())
+                results[i++] = resultSet.getInt("meal_id");
                 
         }
         catch(SQLException ex)
@@ -595,7 +685,7 @@ class Database {
         }
         finally
         {
-            closeResources(s, rs);
+            closeResources();
         }
         
         return results;
@@ -615,6 +705,7 @@ class Database {
     {
         try 
         {
+            account = null;
             connection.close();
         } 
         catch (SQLException ex) 
