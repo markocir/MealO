@@ -13,15 +13,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
  *
- * @author markoc
+ * @author Marko Čirič <https://github.com/markocir>
  */
 public class OrdersSettings extends JPanel{
     private Database database = null;
@@ -194,7 +188,7 @@ public class OrdersSettings extends JPanel{
 
                 for(int mealNumber = 1; mealNumber<=database.getNumberOfMealsPerDay(); mealNumber++)
                 {
-                    int count = database.getCountOfMeals(date, shiftNumber, mealNumber);
+                    int count = database.getCountOfMealOrders(date, shiftNumber, mealNumber);
                     ordersRow.setMealCount(mealNumber, count);
                 }
 
