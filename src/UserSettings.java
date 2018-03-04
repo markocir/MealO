@@ -284,9 +284,4 @@ public class UserSettings extends JPanel{
                             addUserPane.getSuperUser()));
 	}
     } 
-    
-    public int getTableWidth()
-    {
-        return table.getWidth();
-    }
 }
